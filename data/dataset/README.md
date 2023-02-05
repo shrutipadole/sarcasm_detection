@@ -1,2 +1,2 @@
-# sarcasm_detection
-Sarcasm Detection in Amazon US Reviews
+# Raw Dataset
+This is where the zip files are downloaded, unzipped, cleaned and stored
