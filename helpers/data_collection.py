@@ -169,11 +169,6 @@ def main(sample):
     for url in data:
         print("URL >>>>   " + url)
         tsv_path = download_file(url)
-        # if not sample:
-        #     tsv_path = unzip(filename)
-        # else:
-        #     tsv_path = filename
-        # print(filename + '\t<<<<<>>>>>>\t' + tsv_path)
         print("Loading dataset from >>> ", tsv_path)
         df = load_dataset(tsv_path)
         #removing rows with null in the following two columns
@@ -185,6 +180,11 @@ def main(sample):
         df = df[df['review_headline'].notna()]
         print("AFTER REMOVING NA IN review_headline >>>>>")
         print(df.shape)
+        tofile = tsv_path.rstrip('.tsv') + '_trim.tsv'
+        df.to_csv(tofile, sep = '\t', index=False)
+        print('created file >>  \t',tofile)
+
+
 
 
 
