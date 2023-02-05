@@ -10,7 +10,7 @@ from gensim.parsing.preprocessing import remove_stopwords
 import string
 LANGUAGE = string.ascii_lowercase + string.punctuation + ' '
 
-# import nltk
+import nltk
 from nltk import word_tokenize
 
 from nltk.stem import WordNetLemmatizer
@@ -23,12 +23,12 @@ LEMMATIZER = WordNetLemmatizer()
 # # ps = LancasterStemmer()
 # # ps = RegexpStemmer('ing$|s$|e$|able$', min=4)
 
-# nltk.download('wordnet')
-# nltk.download('punkt')
-# nltk.download('omw-1.4')
+nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('omw-1.4')
 
 with open('../data/source/common_abbreviations.json') as user_file:
-  COMMON_ABBREV = user_file.read()
+  COMMON_ABBREV = json.loads(user_file.read())
 
 
 def download_file(url):
@@ -41,7 +41,7 @@ def download_file(url):
     # import pdb;pdb.set_trace()
     path = '../data/dataset'
     zip_path = path + '/' + url.split('/')[-1]
-    unzip_path = zip_path.rstrip('.gz')
+    unzip_path = zip_path.replace(".gz",'')
 
     if not os.path.exists(zip_path): #zip file not present 
         if not os.path.exists(unzip_path):
@@ -89,7 +89,7 @@ def unzip(infile):
              Eg:
     """
     # infile = '../data/dataset/' + filename.split('/')[-1]
-    tofile = infile.rstrip('.gz')
+    tofile = infile.replace('.gz','')
 
     with open(infile, 'rb') as inf, open(tofile, 'w', encoding='utf8') as tof:
         decom_str = gzip.decompress(inf.read()).decode('utf-8')
@@ -180,7 +180,15 @@ def main(sample):
         df = df[df['review_headline'].notna()]
         print("AFTER REMOVING NA IN review_headline >>>>>")
         print(df.shape)
-        tofile = tsv_path.rstrip('.tsv') + '_trim.tsv'
+        tofile = tsv_path.replace('.tsv','_trim.tsv')
+        df.to_csv(tofile, sep = '\t', index=False)
+        print('created file >>  \t',tofile)
+
+        #applying cleaning procedures to review_headline and review_body
+        df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
+        df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
+
+        tofile = tsv_path.replace('.tsv', '_clean.tsv')
         df.to_csv(tofile, sep = '\t', index=False)
         print('created file >>  \t',tofile)
 
