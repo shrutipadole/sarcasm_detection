@@ -89,12 +89,12 @@ def unzip(infile):
              Eg:
     """
     # infile = '../data/dataset/' + filename.split('/')[-1]
-    tofile = infile.replace('.gz','')
-
-    with open(infile, 'rb') as inf, open(tofile, 'w', encoding='utf8') as tof:
-        decom_str = gzip.decompress(inf.read()).decode('utf-8')
-        tof.write(decom_str)
-    delete(infile)
+    tofile = infile.replace('.gz', '')
+    if infile.endswith('.gz'):
+        with open(infile, 'rb') as inf, open(tofile, 'w', encoding='utf8') as tof:
+            decom_str = gzip.decompress(inf.read()).decode('utf-8')
+            tof.write(decom_str)
+        delete(infile)
     return tofile
 
 def load_dataset(filename):
