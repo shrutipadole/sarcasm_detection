@@ -2,6 +2,7 @@ import wget
 import pandas as pd
 import gzip
 import json
+import shutil
 import re
 import os
 import sys
@@ -91,9 +92,8 @@ def unzip(infile):
     # infile = '../data/dataset/' + filename.split('/')[-1]
     tofile = infile.replace('.gz', '')
     if infile.endswith('.gz'):
-        with open(infile, 'rb') as inf, open(tofile, 'w', encoding='utf8') as tof:
-            decom_str = gzip.decompress(inf.read()).decode('utf-8')
-            tof.write(decom_str)
+        with open(tofile, 'wb') as f_out, gzip.open(infile, 'rb') as f_in:
+            shutil.copyfileobj(f_in, f_out)
         delete(infile)
     return tofile
 
