@@ -4,6 +4,7 @@ import gzip
 import json
 import shutil
 import re
+import numpy as np
 import os
 import sys
 from gensim.parsing.preprocessing import remove_stopwords
@@ -185,8 +186,12 @@ def main(sample):
         print('created file >>  \t',tofile)
 
         #applying cleaning procedures to review_headline and review_body
-        df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
-        df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
+        # df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
+        # df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
+
+        df['clean_review_headline'] = np.vectorize(preprocess)(df['review_headline'])
+        df['clean_review_body'] = np.vectorize(preprocess)(df['review_body'])
+
 
         tofile = tsv_path.replace('.tsv', '_clean.tsv')
         df.to_csv(tofile, sep = '\t', index=False)
