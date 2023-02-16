@@ -119,7 +119,7 @@ def preprocess(sent):
     #replacing website links
     sent = re.sub(r"(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)", "", sent)
     #removing stopwords
-    sent = remove_stopwords(sent)
+    #sent = remove_stopwords(sent)
     #stemming
     # sent = " ".join([ps.stem(word) for word in word_tokenize(sent)])
     #lemmatizing
