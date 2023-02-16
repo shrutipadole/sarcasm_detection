@@ -202,13 +202,13 @@ def main(sample):
         print('created file >>  \t',tofile)
 
         #deciding number of splits for processing huge dataframe
-        num_splits = df.shape[0]//100000
-        list_of_dataframes = [call_clean_df(sub_df) for sub_df in np.array_split(df, num_splits)]
-        df = pd.concat(list_of_dataframes)
-
-        tofile = tsv_path.replace('.tsv', '_clean.tsv')
-        df.to_csv(tofile, sep = '\t', index=False)
-        print('created file >>  \t',tofile)
+        num_splits = df.shape[0]//80000
+        for ind, sub_df in enumerate(np.array_split(df, num_splits)):
+            sub_df = call_clean_df(sub_df)
+            replace_sent = 'clean_part_{}.tsv'.format(str(ind))
+            tofile = tsv_path.replace('.tsv', replace_sent)
+            sub_df.to_csv(tofile, sep = '\t', index=False)
+            print('created file >>  \t',tofile)
 
 
 
