@@ -7,7 +7,8 @@ import re
 import numpy as np
 import os
 import sys
-from gensim.parsing.preprocessing import remove_stopwords
+from datetime import datetime
+# from gensim.parsing.preprocessing import remove_stopwords
 
 import string
 LANGUAGE = string.ascii_lowercase + string.punctuation + ' '
@@ -151,6 +152,21 @@ def preprocess(sent):
     
     return sent
 
+def call_clean_df(df):
+    dt_started = datetime.utcnow()
+    print(df.shape)
+    #applying cleaning procedures to review_headline and review_body
+    # df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
+    # df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
+
+    df['clean_review_headline'] = np.vectorize(preprocess)(df['review_headline'])
+    df['clean_review_body'] = np.vectorize(preprocess)(df['review_body'])
+    dt_ended = datetime.utcnow()
+    print("Time taken : ", str((dt_ended - dt_started).total_seconds()))
+    return df
+    
+
+
 def main(sample):
     """
     input : url to zip files of amazon customer reviews
@@ -185,13 +201,10 @@ def main(sample):
         df.to_csv(tofile, sep = '\t', index=False)
         print('created file >>  \t',tofile)
 
-        #applying cleaning procedures to review_headline and review_body
-        # df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
-        # df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
-
-        df['clean_review_headline'] = np.vectorize(preprocess)(df['review_headline'])
-        df['clean_review_body'] = np.vectorize(preprocess)(df['review_body'])
-
+        #deciding number of splits for processing huge dataframe
+        num_splits = df.shape[0]//100000
+        list_of_dataframes = [call_clean_df(sub_df) for sub_df in np.array_split(df, num_splits)]
+        df = pd.concat(list_of_dataframes)
 
         tofile = tsv_path.replace('.tsv', '_clean.tsv')
         df.to_csv(tofile, sep = '\t', index=False)
