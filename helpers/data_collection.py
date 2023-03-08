@@ -8,6 +8,7 @@ import numpy as np
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 # from gensim.parsing.preprocessing import remove_stopwords
 
 import string
@@ -30,8 +31,9 @@ nltk.download('wordnet')
 nltk.download('punkt')
 nltk.download('omw-1.4')
 
-SKIP_FILES = ["amazon_reviews_us_Wireless_v1_00.tsv", "amazon_reviews_us_Watches_v1_00.tsv",
-"amazon_reviews_us_Video_Games_v1_00.tsv"]
+SKIP_FILES = []
+# SKIP_FILES = ["amazon_reviews_us_Wireless_v1_00.tsv", "amazon_reviews_us_Watches_v1_00.tsv",
+# "amazon_reviews_us_Video_Games_v1_00.tsv"]
 
 with open('../data/source/common_abbreviations.json') as user_file:
   COMMON_ABBREV = json.loads(user_file.read())
@@ -45,7 +47,10 @@ def download_file(url):
              Eg: '../data/dataset/sample_us.tsv'
     """
     # import pdb;pdb.set_trace()
-    path = '../data/dataset'
+    file_folder_name = url.split('/')[-1].replace(".tsv","")
+    path = '../data/dataset/' + file_folder_name
+    Path(path).mkdir(parents=True, exist_ok=True)
+
     zip_path = path + '/' + url.split('/')[-1]
     unzip_path = zip_path.replace(".gz",'')
 
@@ -206,6 +211,7 @@ def main(sample):
         df = df[df['review_headline'].notna()]
         print("AFTER REMOVING NA IN review_headline >>>>>")
         print(df.shape)
+        # import pdb;pdb.set_trace()
         tofile = tsv_path.replace('.tsv','_trim.tsv')
         df.to_csv(tofile, sep = '\t', index=False)
         print('created file >>  \t',tofile)
