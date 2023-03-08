@@ -30,6 +30,9 @@ nltk.download('wordnet')
 nltk.download('punkt')
 nltk.download('omw-1.4')
 
+SKIP_FILES = ["amazon_reviews_us_Wireless_v1_00.tsv", "amazon_reviews_us_Watches_v1_00.tsv",
+"amazon_reviews_us_Video_Games_v1_00.tsv"]
+
 with open('../data/source/common_abbreviations.json') as user_file:
   COMMON_ABBREV = json.loads(user_file.read())
 
@@ -156,6 +159,7 @@ def call_clean_df(df):
     dt_started = datetime.utcnow()
     print(df.shape)
     #applying cleaning procedures to review_headline and review_body
+
     # df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
     # df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
 
@@ -187,6 +191,7 @@ def main(sample):
         with open('../data/source/data_urls.txt', 'r') as f:
             data = f.readlines()
             data = [each.strip('\n') for each in data]
+            data = [each for each in data if each.split("/")[-1].replace(".gz","") not in SKIP_FILES]
     for url in data:
         print("URL >>>>   " + url)
         tsv_path = download_file(url)
