@@ -159,8 +159,12 @@ def call_clean_df(df):
     # df['clean_review_headline'] = df.apply(lambda df: preprocess(df['review_headline']), axis=1)
     # df['clean_review_body'] = df.apply(lambda df: preprocess(df['review_body']), axis=1)
 
-    df['clean_review_headline'] = np.vectorize(preprocess)(df['review_headline'])
-    df['clean_review_body'] = np.vectorize(preprocess)(df['review_body'])
+    #df['clean_review_headline'] = np.vectorize(preprocess)(df['review_headline'])
+    #df['clean_review_body'] = np.vectorize(preprocess)(df['review_body'])
+    
+    df['clean_review_headline'] = df['review_headline'].map(preprocess)
+    df['clean_review_body'] = df['review_body'].map(preprocess)
+
     dt_ended = datetime.utcnow()
     print("Time taken : ", str((dt_ended - dt_started).total_seconds()))
     return df
@@ -202,7 +206,7 @@ def main(sample):
         print('created file >>  \t',tofile)
 
         #deciding number of splits for processing huge dataframe
-        num_splits = df.shape[0]//80000
+        num_splits = df.shape[0]//100000
         for ind, sub_df in enumerate(np.array_split(df, num_splits)):
             sub_df = call_clean_df(sub_df)
             replace_sent = 'clean_part_{}.tsv'.format(str(ind))
