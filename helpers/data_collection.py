@@ -47,7 +47,7 @@ def download_file(url):
              Eg: '../data/dataset/sample_us.tsv'
     """
     # import pdb;pdb.set_trace()
-    file_folder_name = url.split('/')[-1].replace(".tsv","")
+    file_folder_name = url.split('/')[-1].replace(".tsv","").replace(".gz",'')
     path = '../data/dataset/' + file_folder_name
     Path(path).mkdir(parents=True, exist_ok=True)
 
